@@ -12,5 +12,5 @@ Simple file monitoring, quarantine, restore, and scheduling system:
 ├── antivirusd.sh       # Continuous directory monitoring daemon
 ├── antivirus-cron.sh   # One-shot scanning script for cron
 ├── restore.sh          # Interactive quarantine recovery tool
-├── test_dir/           # Monitored directory (files only)[cite: 1]
-└── quarantine/         # Storage for isolated malicious files[cite: 1]
+├── test_folder/           # Monitored directory (files only)
+└── quarantine_folder/         # Storage for isolated malicious files
