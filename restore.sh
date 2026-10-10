@@ -56,6 +56,7 @@ while true; do
     if [ "$opt" -eq 1 ]; then
         mv "$selected_filepath" "$DIR/"
         echo "File '$selected_filename' restored to '$DIR'."
+        echo "$selected_filename" >> "$WHITELIST_FILE"
     elif [ "$opt" -eq 2 ]; then
         rm -f "$selected_filepath"
         echo "File '$selected_filename' deleted."
