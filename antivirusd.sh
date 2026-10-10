@@ -19,7 +19,7 @@ if [ ! -d "$DIR" ]; then
 fi
 
 mkdir -p "$MALICIOUS_DIR"
-touch "WHITELIST_FILE"
+touch "$WHITELIST_FILE"
 
 BAD_EXTENSIONS=("exe" "bat" "vbs" "scr" "ps1")
 BAD_KEYWORDS=("virus" "trojan" "malware" "worm" "ransomware")
@@ -34,7 +34,7 @@ is_whitelisted(){
 
 scan_file(){
     local filepath="$1"
-    local filename="$(basename = "$filepath")"
+    local filename="$(basename="$filepath")"
 
     if is_whitelisted "$filename"; then
         return 0
@@ -45,8 +45,8 @@ scan_file(){
     local ext="${filename##*.}"
 
     if [ "$ext" != "$filename" ]; then
-        for extension in "${BAD_EXTENSIONS[@]}"; do
-            if [ "$ext" = "$BAD_EXTENSIONS" ]; then
+        for extension in "${BAD_EXTENSIONS}"; do
+            if [ "$ext" = "$extension" ]; then
                 IS_MALICIOUS=1
                 break
             fi
@@ -61,7 +61,7 @@ scan_file(){
     fi
 
     if [ "$IS_MALICIOUS" -eq 1 ]; then
-        echo "$filename is malicious and it is DELTED"
+        echo "$filename is malicious and it is DELETED"
         cp "$filepath" "$MALICIOUS_DIR/$filename"
         rm -f "$filepath"
     fi
@@ -84,7 +84,7 @@ while true; do
     sleep "$INTERVAL" 
     echo "starting new scan.."
     ls -l "$DIR" > "$NEW_INFO"
-    if ! cmp -s "$LAST_INFO" "NEW_INFO"; then
+    if ! cmp -s "$LAST_INFO" "$NEW_INFO"; then
         scan_directory
         ls -l "$DIR" > "$LAST_INFO"
     fi
