@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-DIR="${1:-$HOME/test_folder}"
-MALICIOUS_DIR="${2:-$HOME/quarantine_folder}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+DIR="${1:-$SCRIPT_DIR/test_folder}"
+MALICIOUS_DIR="${2:-$SCRIPT_DIR/quarantine_folder}"
 WHITELIST_FILE="${3:-$SCRIPT_DIR/.whitelist}"
 
 mkdir -p "$DIR"
@@ -17,11 +18,9 @@ for file in "$DIR"/*; do
             continue
         fi
         IS_MALICIOUS=0
-        case "$FILENAME" in
-            *.exe|*.bat|*.vbs|*.scr|*.ps1)
-                IS_MALICIOUS=1
-                ;;
-        esac
+        if [[ "$FILENAME" =~ \.(exe|bat|vbs|scr|ps1)$ ]]; then
+            IS_MALICIOUS=1
+        fi
         if [ "$IS_MALICIOUS" -eq 0 ] && [ -f "$file" ]; then
             if grep -qiE "virus|trojan|malware|worm|ransomware" "$file"; then
                 IS_MALICIOUS=1
