@@ -24,7 +24,7 @@ touch "$WHITELIST_FILE"
 BAD_EXTENSIONS=("exe" "bat" "vbs" "scr" "ps1")
 BAD_KEYWORDS=("virus" "trojan" "malware" "worm" "ransomware")
 
-is_whitelisted(){
+is_whitelisted() {
     local filename="$1"
     if [ -f "$WHITELIST_FILE" ]; then
         grep -Fxq "$filename" "$WHITELIST_FILE" && return 0
@@ -32,7 +32,7 @@ is_whitelisted(){
     return 1
 }
 
-scan_file(){
+scan_file() {
     local filepath="$1"
     local filename="$(basename "$filepath")"
 
@@ -54,7 +54,7 @@ scan_file(){
     fi
 
     if [ "$IS_MALICIOUS" -eq 0 ] && [ -f "$filepath" ]; then
-        for keyword in "{BAD_KEYWORDS[@]}"; do
+        for keyword in "${BAD_KEYWORDS[@]}"; do
             if grep -qi "$keyword" "$filepath"; then
                 IS_MALICIOUS=1
                 break
@@ -68,7 +68,7 @@ scan_file(){
         rm -f "$filepath"
     fi
 }
-scan_directory(){
+scan_directory() {
     for file in "$DIR"/*; do
         if [ -f "$file" ]; then
             scan_file "$file"
