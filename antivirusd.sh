@@ -9,8 +9,8 @@ DIR="$1"
 MALICIOUS_DIR="$2"
 INTERVAL="$3"
 
-LAST_INFO="directory_info.last"
-NEW_INFO="directory_info.new"
+LAST_INFO="directory-info.last"
+NEW_INFO="directory-info.new"
 WHITELIST_FILE=".whitelist"
 
 if [ ! -d "$DIR" ]; then
@@ -34,7 +34,7 @@ is_whitelisted(){
 
 scan_file(){
     local filepath="$1"
-    local filename="$(basename="$filepath")"
+    local filename="$(basename "$filepath")"
 
     if is_whitelisted "$filename"; then
         return 0
@@ -45,7 +45,7 @@ scan_file(){
     local ext="${filename##*.}"
 
     if [ "$ext" != "$filename" ]; then
-        for extension in "${BAD_EXTENSIONS}"; do
+        for extension in "${BAD_EXTENSIONS[@]}"; do
             if [ "$ext" = "$extension" ]; then
                 IS_MALICIOUS=1
                 break
@@ -54,10 +54,12 @@ scan_file(){
     fi
 
     if [ "$IS_MALICIOUS" -eq 0 ] && [ -f "$filepath" ]; then
-        local pattern=$(IFS='|'; echo "${BAD_KEYWORDS[*]}")
-        if  grep -qiE "$pattern" "$filepath" 2>/dev/null; then
-            IS_MALICIOUS=1
-        fi
+        for keyword in "{BAD_KEYWORDS[@]}"; do
+            if grep -qi "$keyword" "$filepath"; then
+                IS_MALICIOUS=1
+                break
+            fi
+        done
     fi
 
     if [ "$IS_MALICIOUS" -eq 1 ]; then
