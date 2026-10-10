@@ -1,11 +1,11 @@
-#!/usr/bin env bash
+#!/usr/bin/env bash
 
 DIR="${1:-$HOME/test_folder}"
 MALICIOUS_DIR="${2:-$HOME/quarantine_folder}"
 WHITELIST_FILE="${3:-.whitelist}"
 
 mkdir -p "$DIR"
-mkdir -p "MALICIOUS_DIR"
+mkdir -p "$MALICIOUS_DIR"
 touch "$WHITELIST_FILE"
 
 shopt -s nullglob
@@ -16,16 +16,16 @@ for file in "$DIR"/*; do
             continue
         fi
         IS_MALICIOUS=0
-        if ["$FILENAME" in *.exe *.bat *.vbs *.scr *.ps1]; then
+        if [ "$FILENAME" = *.exe ] || [ "$FILENAME" = *.bat ] || [ "$FILENAME" = *.vbs ] || [ "$FILENAME" = *.scr ] || [ "$FILENAME" = *.ps1 ]; then
             IS_MALICIOUS=1
         fi
         if grep -qiE "virus|trojan|malware|worm|ransomware" "$file"; then
             IS_MALICIOUS=1
         fi
         if [ "$IS_MALICIOUS" -eq 1 ]; then
-            echo "$(date: '+%Y-%m-%d %H:%M:%S') - $FILENAME is malicious and it is DELETED."
+            echo "$(date '+%Y-%m-%d %H:%M:%S') - $FILENAME is malicious and it is DELETED."
             cp "$file" "$MALICIOUS_DIR/"
-            rm -f "file"
+            rm -f "$file"
         fi
     fi
 done
