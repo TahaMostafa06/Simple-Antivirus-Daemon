@@ -2,7 +2,8 @@
 
 DIR="${1:-$HOME/test_folder}"
 MALICIOUS_DIR="${2:-$HOME/quarantine_folder}"
-WHITELIST_FILE="${3:-.whitelist}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WHITELIST_FILE="${3:-$SCRIPT_DIR/.whitelist}"
 
 mkdir -p "$DIR"
 mkdir -p "$MALICIOUS_DIR"
@@ -16,11 +17,15 @@ for file in "$DIR"/*; do
             continue
         fi
         IS_MALICIOUS=0
-        if [ "$FILENAME" = *.exe ] || [ "$FILENAME" = *.bat ] || [ "$FILENAME" = *.vbs ] || [ "$FILENAME" = *.scr ] || [ "$FILENAME" = *.ps1 ]; then
-            IS_MALICIOUS=1
-        fi
-        if grep -qiE "virus|trojan|malware|worm|ransomware" "$file"; then
-            IS_MALICIOUS=1
+        case "$FILENAME" in
+            *.exe|*.bat|*.vbs|*.scr|*.ps1)
+                IS_MALICIOUS=1
+                ;;
+        esac
+        if [ "$IS_MALICIOUS" -eq 0 ] && [ -f "$file" ]; then
+            if grep -qiE "virus|trojan|malware|worm|ransomware" "$file"; then
+                IS_MALICIOUS=1
+            fi
         fi
         if [ "$IS_MALICIOUS" -eq 1 ]; then
             echo "$(date '+%Y-%m-%d %H:%M:%S') - $FILENAME is malicious and it is DELETED."
